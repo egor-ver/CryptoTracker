@@ -22,13 +22,14 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         lifecycleScope.launch {
             try{
-               val coins = RetrofitClient.api.getCoins()
-                Log.d("CRYPTO", "Загружено монет: ${coins.size}, первая: ${coins.first().name}")
+                val coins = RetrofitClient.api.getCoins()
+                Log.d("CRYPTO: ","Загружено монет: ${coins.size}")
             }
-            catch (e: Exception){
-                Log.e("CRYPTO", "Ошибка: ${e.message}")
+            catch(e: Exception){
+                Log.e("CRYPTO: ", "Ошибка: ${e.message}")
             }
         }
+
         enableEdgeToEdge()
         setContent {
             CryptoTrackerTheme {
