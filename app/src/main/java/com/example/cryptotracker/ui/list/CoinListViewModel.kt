@@ -8,23 +8,29 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class CoinListViewModel: ViewModel(){
-    private val repository: CoinRepository = CoinRepositoryImpl()
+class CoinListViewModel(
+    private val repository: CoinRepository
+): ViewModel(){
+
+    constructor() : this(CoinRepositoryImpl())
+
     private val _uiState = MutableStateFlow<CoinListUiState>(CoinListUiState.Loading)
     val uiState: StateFlow<CoinListUiState> = _uiState
-    init{
-        loadCoins()
-    }
     private fun loadCoins(){
+        _uiState.value = CoinListUiState.Loading
         viewModelScope.launch {
-            _uiState.value = CoinListUiState.Loading
-            try{
+            try {
                 val coins = repository.getCoins()
                 _uiState.value = CoinListUiState.Success(coins)
-            }
-            catch (e: Exception){
+            } catch (e: Exception) {
                 _uiState.value = CoinListUiState.Error(e.message ?: "Ошибка сети")
             }
         }
+    }
+    init{
+        loadCoins()
+    }
+    fun retry(){
+        loadCoins()
     }
 }

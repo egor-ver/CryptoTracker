@@ -11,6 +11,6 @@ interface CoinApi{
         @Query("order") order: String = "market_cap_desc",
         @Query("per_page") perPage: Int = 50,
         @Query("page") page: Int = 1
-    ) : List<CoinDto>
+    ): List<CoinDto>
 
 }
