@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cryptotracker.data.repository.CoinRepository
 import com.example.cryptotracker.data.repository.CoinRepositoryImpl
+import com.example.cryptotracker.domain.model.Coin
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -33,4 +34,10 @@ class CoinListViewModel(
     fun retry(){
         loadCoins()
     }
+    var selectedCoin: Coin? = null
+        private set
+    fun selectCoin(coin: Coin){
+        selectedCoin = coin
+    }
+
 }

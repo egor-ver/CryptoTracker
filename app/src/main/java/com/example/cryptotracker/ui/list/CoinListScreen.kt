@@ -1,13 +1,11 @@
 package com.example.cryptotracker.ui
-
-import androidx.compose.foundation.focusable
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
@@ -33,7 +31,7 @@ import com.example.cryptotracker.ui.list.CoinListViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CoinListScreen(viewModel: CoinListViewModel){
+fun CoinListScreen(viewModel: CoinListViewModel, onCoinClick: (Coin) -> Unit){
     val uiState by viewModel.uiState.collectAsState()
     val state = uiState
     Scaffold(
@@ -46,7 +44,7 @@ fun CoinListScreen(viewModel: CoinListViewModel){
             modifier = Modifier.fillMaxSize()
         ) {
             items(state.coins){ coin ->
-                CoinItem(coin)
+                CoinItem(coin, onClick = {onCoinClick(coin)})
             }
         }
         is CoinListUiState.Error -> Column(
@@ -69,11 +67,12 @@ fun CoinListScreen(viewModel: CoinListViewModel){
 }
 
 @Composable
-fun CoinItem(coin: Coin){
+fun CoinItem(coin: Coin, onClick: () -> Unit){
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp)
+            .clickable(onClick = {onClick()})
     ) {
         Row(
             Modifier.padding(16.dp)
@@ -124,6 +123,7 @@ fun CoinItemPreview() {
             imageUrl = "",
             price = 50000.0,
             priceChange = 2.2
-        )
+        ),
+        onClick = {}
     )
 }
