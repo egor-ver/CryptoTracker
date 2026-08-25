@@ -1,56 +1,56 @@
 # CryptoTracker
 
-A cryptocurrency price tracker for Android — browse live coin prices and 24h changes, tap into any coin for details. Built to practice modern Android architecture end-to-end: Jetpack Compose UI, MVVM with a clean data/domain/ui separation, coroutines + Flow, and a real REST API.
+Трекер цен на криптовалюты для Android — список монет с текущей ценой и изменением за 24 часа, переход в детали по тапу. Проект написан, чтобы отработать современную Android-архитектуру целиком: UI на Jetpack Compose, MVVM с чистым разделением на слои data/domain/ui, корутины + Flow и работа с реальным REST API.
 
-## Features
+## Возможности
 
-- 📈 Live list of cryptocurrencies with current price and 24h change (color-coded: green up / red down)
-- 🔍 Tap a coin to open a detail screen
-- ⏳ Loading / error states with a **Retry** action on failure
-- 🔄 Data fetched from the [CoinGecko](https://www.coingecko.com/en/api) public API
+- 📈 Список криптовалют с актуальной ценой и изменением за 24ч (цветом: зелёный — рост, красный — падение)
+- 🔍 Тап по монете открывает экран деталей
+- ⏳ Состояния загрузки и ошибки с кнопкой **«Повторить»** при сбое
+- 🔄 Данные из публичного API [CoinGecko](https://www.coingecko.com/en/api)
 
-## Tech stack
+## Стек
 
-| Area | Tools |
-|------|-------|
-| Language | Kotlin |
+| Область | Инструменты |
+|---------|-------------|
+| Язык | Kotlin |
 | UI | Jetpack Compose, Material 3 |
-| Architecture | MVVM, unidirectional data flow (UDF) |
-| Async | Coroutines, Flow, StateFlow |
-| Networking | Retrofit, OkHttp, Gson |
-| Navigation | Navigation-Compose |
-| Testing | JUnit, coroutines-test (fake repository, MainDispatcherRule) |
+| Архитектура | MVVM, однонаправленный поток данных (UDF) |
+| Асинхронность | Coroutines, Flow, StateFlow |
+| Сеть | Retrofit, OkHttp, Gson |
+| Навигация | Navigation-Compose |
+| Тестирование | JUnit, coroutines-test (fake-репозиторий, MainDispatcherRule) |
 
-## Architecture
+## Архитектура
 
-Clean separation into three layers, dependencies pointing inward:
+Разделение на три слоя, зависимости направлены внутрь:
 
 ```
-ui (Compose screens + ViewModel, StateFlow<UiState>)
-        ↓ observes state / sends events
-domain (Coin model)
+ui (Compose-экраны + ViewModel, StateFlow<UiState>)
+        ↓ наблюдает состояние / шлёт события
+domain (модель Coin)
         ↓
-data (Retrofit CoinApi, DTOs, mapper, Repository)
+data (Retrofit CoinApi, DTO, маппер, Repository)
         ↓
 CoinGecko REST API
 ```
 
-**Data flow:** the UI collects `StateFlow<UiState>` from the ViewModel and renders it; user actions call ViewModel methods; the ViewModel asks the Repository, which fetches DTOs from the network, maps them to domain models, and returns them — the ViewModel updates its state, and the UI recomposes.
+**Поток данных:** UI собирает `StateFlow<UiState>` из ViewModel и отрисовывает его; действия пользователя вызывают методы ViewModel; ViewModel запрашивает Repository, который получает DTO из сети, маппит их в доменные модели и возвращает — ViewModel обновляет состояние, UI перерисовывается.
 
-- **data** — `CoinApi` (Retrofit interface), `RetrofitClient`, `CoinDto`, `CoinMappers`, `CoinRepository` + `CoinRepositoryImpl`
-- **domain** — `Coin` (clean model)
+- **data** — `CoinApi` (интерфейс Retrofit), `RetrofitClient`, `CoinDto`, `CoinMappers`, `CoinRepository` + `CoinRepositoryImpl`
+- **domain** — `Coin` (чистая модель)
 - **ui** — `CoinListScreen` / `CoinListViewModel` / `CoinListUiState`, `CoinDetailScreen`, `MainActivity` (NavHost)
 
-## Testing
+## Тестирование
 
-Unit tests run on the JVM (no device needed):
+Юнит-тесты выполняются на JVM (устройство не нужно):
 
-- **Mapper test** — verifies DTO → domain mapping field-by-field
-- **ViewModel test** — a `FakeRepository` injected via constructor + `MainDispatcherRule` to drive coroutines in tests
+- **Тест маппера** — проверяет маппинг DTO → доменную модель по каждому полю
+- **Тест ViewModel** — `FakeRepository` внедряется через конструктор + `MainDispatcherRule` для запуска корутин в тестах
 
-## Getting started
+## Запуск
 
-1. Clone the repo and open in Android Studio.
-2. Run on an emulator or device (min SDK 24).
+1. Клонируй репозиторий и открой в Android Studio.
+2. Запусти на эмуляторе или устройстве (min SDK 24).
 
-The API is public and needs no key.
+API публичный, ключ не нужен.
