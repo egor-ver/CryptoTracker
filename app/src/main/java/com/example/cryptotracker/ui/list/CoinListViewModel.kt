@@ -31,13 +31,7 @@ class CoinListViewModel(
     init{
         loadCoins()
     }
-    fun retry(){
+    fun retry() {
         loadCoins()
     }
-    var selectedCoin: Coin? = null
-        private set
-    fun selectCoin(coin: Coin){
-        selectedCoin = coin
-    }
-
 }
