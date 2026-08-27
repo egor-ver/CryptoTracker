@@ -48,9 +48,12 @@ class MainActivity : ComponentActivity() {
                         backStackEntry ->
                         val coinId = backStackEntry.arguments?.getString("coinId")
                         val uiState by viewModel.uiState.collectAsState()
-                        val coin = (uiState as CoinListUiState.Success)?.coins?.find { it.id == coinId }
+                        val coin = (uiState as? CoinListUiState.Success)?.coins?.find { it.id == coinId }
                         if(coin != null){
-                            CoinDetailScreen(coin)
+                            CoinDetailScreen(
+                                coin = coin,
+                                onBackClick = {navController.popBackStack() }
+                            )
                         }
                         else CircularProgressIndicator()
                     }
