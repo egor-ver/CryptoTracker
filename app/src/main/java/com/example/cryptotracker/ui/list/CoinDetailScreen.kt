@@ -23,7 +23,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.cryptotracker.domain.model.Coin
-
+import com.example.cryptotracker.ui.theme.PriceUp
+import com.example.cryptotracker.ui.theme.PriceDown
 @Composable
 fun CoinDetailScreen(coin: Coin, onBackClick: () -> Unit){
     Column(
@@ -50,13 +51,13 @@ fun CoinDetailScreen(coin: Coin, onBackClick: () -> Unit){
             Column(
                 Modifier.padding(16.dp)
             ) {
-                Text("Цена: ${coin.price}$")
+                Text("Цена: ${"%.2f".format(coin.price)}$")
                 Spacer(
                     Modifier.height(8.dp)
                 )
                 val priceColor = when{
-                    coin.priceChange > 0 -> Color.Green
-                    coin.priceChange < 0 -> Color.Red
+                    coin.priceChange > 0 -> PriceUp
+                    coin.priceChange < 0 -> PriceDown
                     else -> Color.Gray
                 }
                 Row(
@@ -65,7 +66,7 @@ fun CoinDetailScreen(coin: Coin, onBackClick: () -> Unit){
                 ) {
                     Text("Изменение за 24ч:")
                     Text(
-                        text = "${coin.priceChange}%",
+                        text = "${"%.2f".format(coin.priceChange)}%",
                         color = priceColor
                     )
                 }

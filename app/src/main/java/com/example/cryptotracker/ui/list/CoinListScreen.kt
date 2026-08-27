@@ -32,6 +32,8 @@ import coil3.compose.AsyncImage
 import com.example.cryptotracker.domain.model.Coin
 import com.example.cryptotracker.ui.list.CoinListUiState
 import com.example.cryptotracker.ui.list.CoinListViewModel
+import com.example.cryptotracker.ui.theme.PriceDown
+import com.example.cryptotracker.ui.theme.PriceUp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -108,16 +110,20 @@ fun CoinItem(coin: Coin, onClick: () -> Unit){
                 horizontalAlignment = Alignment.End
             ) {
                 Text(
-                    text = "${coin.price}",
+                    text = "%.2f".format(coin.price),
                     fontWeight = FontWeight.Bold
                 )
                 val changeColor = when{
-                    coin.priceChange > 0 -> Color.Green
-                    coin.priceChange < 0 -> Color.Red
+                    coin.priceChange > 0 -> PriceUp
+                    coin.priceChange < 0 -> PriceDown
                     else -> Color.Gray
                 }
+                val plusOrEmpty = when{
+                    coin.priceChange >= 0 -> "+"
+                    else -> ""
+                }
                 Text(
-                    text = "${coin.priceChange}%",
+                    text = "$plusOrEmpty${"%.2f".format(coin.priceChange)}%",
                     color = changeColor
                 )
             }
