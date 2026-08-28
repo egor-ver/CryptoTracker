@@ -20,7 +20,9 @@ import com.example.cryptotracker.ui.list.CoinDetailScreen
 import com.example.cryptotracker.ui.list.CoinListUiState
 import com.example.cryptotracker.ui.list.CoinListViewModel
 import com.example.cryptotracker.ui.theme.CryptoTrackerTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private val viewModel: CoinListViewModel by viewModels()
 
