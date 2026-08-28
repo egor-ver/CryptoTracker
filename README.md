@@ -9,6 +9,10 @@
 - ⏳ Состояния загрузки и ошибки с кнопкой **«Повторить»** при сбое
 - 🔄 Данные из публичного API [CoinGecko](https://www.coingecko.com/en/api)
 
+## Скриншоты
+
+<img src="screenshots/list.png" width="250"/>&nbsp;&nbsp;<img src="screenshots/detail.png" width="250"/>
+
 ## Стек
 
 | Область | Инструменты |
@@ -16,8 +20,10 @@
 | Язык | Kotlin |
 | UI | Jetpack Compose, Material 3 |
 | Архитектура | MVVM, однонаправленный поток данных (UDF) |
+| DI | Hilt (Dagger) |
 | Асинхронность | Coroutines, Flow, StateFlow |
 | Сеть | Retrofit, OkHttp, Gson |
+| Изображения | Coil (иконки монет) |
 | Навигация | Navigation-Compose |
 | Тестирование | JUnit, coroutines-test (fake-репозиторий, MainDispatcherRule) |
 
@@ -37,9 +43,12 @@ CoinGecko REST API
 
 **Поток данных:** UI собирает `StateFlow<UiState>` из ViewModel и отрисовывает его; действия пользователя вызывают методы ViewModel; ViewModel запрашивает Repository, который получает DTO из сети, маппит их в доменные модели и возвращает — ViewModel обновляет состояние, UI перерисовывается.
 
-- **data** — `CoinApi` (интерфейс Retrofit), `RetrofitClient`, `CoinDto`, `CoinMappers`, `CoinRepository` + `CoinRepositoryImpl`
+- **data** — `CoinApi` (интерфейс Retrofit), `CoinDto`, `CoinMappers`, `CoinRepository` + `CoinRepositoryImpl`
 - **domain** — `Coin` (чистая модель)
 - **ui** — `CoinListScreen` / `CoinListViewModel` / `CoinListUiState`, `CoinDetailScreen`, `MainActivity` (NavHost)
+- **di** — Hilt-модули: `NetworkModule` (`@Provides` для Retrofit/`CoinApi`), `CoinRepositoryModule` (`@Binds` интерфейса на реализацию)
+
+**Внедрение зависимостей:** через Hilt. `CoinApi` поставляется модулем, `CoinRepositoryImpl` получает его в конструктор (`@Inject`), а `CoinListViewModel` (`@HiltViewModel`) получает репозиторий — зависимости идут через интерфейсы, что развязывает слои и упрощает тестирование.
 
 ## Тестирование
 
