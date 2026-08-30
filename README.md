@@ -29,17 +29,15 @@
 
 ## Архитектура
 
-Разделение на три слоя, зависимости направлены внутрь:
+Разделение на три слоя, зависимости направлены внутрь (`ui → domain ← data`):
 
-```
-ui (Compose-экраны + ViewModel, StateFlow<UiState>)
-        ↓ наблюдает состояние / шлёт события
-domain (модель Coin)
-        ↓
-data (Retrofit CoinApi, DTO, маппер, Repository)
-        ↓
-CoinGecko REST API
-```
+| Слой | Содержимое | Зависит от |
+|------|-----------|-----------|
+| **ui** | Compose-экраны, ViewModel, `StateFlow<UiState>` | domain |
+| **domain** | модель `Coin` | — |
+| **data** | Retrofit `CoinApi`, DTO, маппер, Repository | domain |
+
+`ui` наблюдает состояние и шлёт события во `ViewModel`. `domain` не имеет зависимостей. `data` реализует репозиторий и обращается к **CoinGecko REST API**.
 
 **Поток данных:** UI собирает `StateFlow<UiState>` из ViewModel и отрисовывает его; действия пользователя вызывают методы ViewModel; ViewModel запрашивает Repository, который получает DTO из сети, маппит их в доменные модели и возвращает — ViewModel обновляет состояние, UI перерисовывается.
 
