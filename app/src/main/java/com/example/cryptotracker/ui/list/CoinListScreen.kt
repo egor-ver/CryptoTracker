@@ -1,4 +1,4 @@
-package com.example.cryptotracker.ui
+package com.example.cryptotracker.ui.list
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,6 +17,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -30,8 +31,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.example.cryptotracker.domain.model.Coin
-import com.example.cryptotracker.ui.list.CoinListUiState
-import com.example.cryptotracker.ui.list.CoinListViewModel
 import com.example.cryptotracker.ui.theme.PriceDown
 import com.example.cryptotracker.ui.theme.PriceUp
 
@@ -40,6 +39,7 @@ import com.example.cryptotracker.ui.theme.PriceUp
 fun CoinListScreen(viewModel: CoinListViewModel, onCoinClick: (Coin) -> Unit){
     val uiState by viewModel.uiState.collectAsState()
     val state = uiState
+    val query by viewModel.searchState.collectAsState()
     Scaffold(
         topBar = {
             TopAppBar(title = {Text("Криптовалюты")})
@@ -49,9 +49,17 @@ fun CoinListScreen(viewModel: CoinListViewModel, onCoinClick: (Coin) -> Unit){
         is CoinListUiState.Success -> LazyColumn(
             modifier = Modifier.fillMaxSize()
         ) {
-            items(state.coins){ coin ->
+            item{
+                TextField(
+                    value = query,
+                    onValueChange = {query -> viewModel.onQueryChanged(query)}
+                )
+            }
+            val filteredList = state.coins.filter { coin -> query.lowercase() in coin.name.lowercase() }
+            items(filteredList){ coin ->
                 CoinItem(coin, onClick = {onCoinClick(coin)})
             }
+
         }
         is CoinListUiState.Error -> Column(
             horizontalAlignment =  Alignment.CenterHorizontally

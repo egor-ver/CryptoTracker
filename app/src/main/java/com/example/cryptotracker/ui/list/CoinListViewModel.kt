@@ -3,6 +3,7 @@ package com.example.cryptotracker.ui.list
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cryptotracker.data.repository.CoinRepository
+import com.example.cryptotracker.domain.model.Coin
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -16,6 +17,14 @@ class CoinListViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow<CoinListUiState>(CoinListUiState.Loading)
     val uiState: StateFlow<CoinListUiState> = _uiState
+
+    private val _searchState = MutableStateFlow("")
+    val searchState: StateFlow<String> = _searchState
+
+    fun onQueryChanged(query: String){
+        _searchState.value = query
+    }
+
     private fun loadCoins(){
         _uiState.value = CoinListUiState.Loading
         viewModelScope.launch {

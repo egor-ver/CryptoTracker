@@ -8,14 +8,12 @@ import androidx.activity.viewModels
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.lifecycle.ViewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.cryptotracker.ui.CoinItem
-import com.example.cryptotracker.ui.CoinListScreen
+import com.example.cryptotracker.ui.list.CoinListScreen
 import com.example.cryptotracker.ui.list.CoinDetailScreen
 import com.example.cryptotracker.ui.list.CoinListUiState
 import com.example.cryptotracker.ui.list.CoinListViewModel
