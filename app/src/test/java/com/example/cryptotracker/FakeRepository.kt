@@ -1,6 +1,6 @@
 package com.example.cryptotracker
 
-import com.example.cryptotracker.data.repository.CoinRepository
+import com.example.cryptotracker.domain.CoinRepository
 import com.example.cryptotracker.domain.model.Coin
 
 class FakeRepository: CoinRepository{

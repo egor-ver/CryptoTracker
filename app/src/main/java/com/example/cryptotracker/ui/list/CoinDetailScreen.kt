@@ -109,5 +109,5 @@ fun CoinDetailScreen(coin: Coin, onBackClick: () -> Unit) {
 @Preview(showBackground = true)
 @Composable
 fun CoinDetailPreview() {
-    CoinDetailScreen(Coin("btc", "BTC", "Bitcoin", "", 50000.0, 2.2), onBackClick = {})
+    CoinDetailScreen(Coin("btc", "BTC", "Bitcoin", "", 50000.0, 2.2)) {}
 }

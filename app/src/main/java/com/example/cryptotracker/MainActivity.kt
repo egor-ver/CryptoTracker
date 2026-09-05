@@ -6,8 +6,10 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Text
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -15,7 +17,8 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.cryptotracker.ui.list.CoinListScreen
 import com.example.cryptotracker.ui.list.CoinDetailScreen
-import com.example.cryptotracker.ui.list.CoinListUiState
+import com.example.cryptotracker.ui.list.CoinDetailUiState
+import com.example.cryptotracker.ui.list.CoinDetailViewModel
 import com.example.cryptotracker.ui.list.CoinListViewModel
 import com.example.cryptotracker.ui.theme.CryptoTrackerTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -45,17 +48,16 @@ class MainActivity : ComponentActivity() {
                         })
 
                     ){
-                        backStackEntry ->
-                        val coinId = backStackEntry.arguments?.getString("coinId")
-                        val uiState by viewModel.uiState.collectAsState()
-                        val coin = (uiState as? CoinListUiState.Success)?.coins?.find { it.id == coinId }
-                        if(coin != null){
-                            CoinDetailScreen(
-                                coin = coin,
-                                onBackClick = {navController.popBackStack() }
-                            )
+                        val detailViewModel: CoinDetailViewModel = hiltViewModel()
+                        val detailState by detailViewModel.uiState.collectAsState()
+                        when (val s = detailState) {
+                            is CoinDetailUiState.Success ->
+                                CoinDetailScreen(s.coin, onBackClick = { navController.popBackStack() },)
+                            is CoinDetailUiState.Loading ->
+                                CircularProgressIndicator()
+                            is CoinDetailUiState.Error ->
+                                Text(s.message)
                         }
-                        else CircularProgressIndicator()
                     }
                 }
 

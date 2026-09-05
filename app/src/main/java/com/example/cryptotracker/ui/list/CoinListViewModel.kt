@@ -2,8 +2,7 @@ package com.example.cryptotracker.ui.list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.cryptotracker.data.repository.CoinRepository
-import com.example.cryptotracker.domain.model.Coin
+import com.example.cryptotracker.domain.CoinRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

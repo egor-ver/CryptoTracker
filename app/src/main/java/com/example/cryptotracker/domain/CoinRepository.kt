@@ -1,4 +1,4 @@
-package com.example.cryptotracker.data.repository
+package com.example.cryptotracker.domain
 
 import com.example.cryptotracker.domain.model.Coin
 
