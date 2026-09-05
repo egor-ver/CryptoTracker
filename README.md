@@ -22,7 +22,7 @@
 | Архитектура | MVVM, однонаправленный поток данных (UDF) |
 | DI | Hilt (Dagger) |
 | Асинхронность | Coroutines, Flow, StateFlow |
-| Сеть | Retrofit, OkHttp, Gson |
+| Сеть | Retrofit, Gson |
 | Изображения | Coil (иконки монет) |
 | Навигация | Navigation-Compose |
 | Тестирование | JUnit, coroutines-test (fake-репозиторий, MainDispatcherRule) |
