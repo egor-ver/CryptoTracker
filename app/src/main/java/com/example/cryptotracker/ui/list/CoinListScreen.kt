@@ -46,6 +46,7 @@ import com.example.cryptotracker.ui.theme.PriceUp
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CoinListScreen(viewModel: CoinListViewModel, onCoinClick: (Coin) -> Unit) {
+    val filtered by viewModel.filteredCoins.collectAsState()
     val state by viewModel.uiState.collectAsState()
     val query by viewModel.searchState.collectAsState()
 
@@ -71,13 +72,11 @@ fun CoinListScreen(viewModel: CoinListViewModel, onCoinClick: (Coin) -> Unit) {
 
             when (val s = state) {
                 is CoinListUiState.Success -> {
-                    val filtered = s.coins.filter {
-                        it.name.contains(query, ignoreCase = true) ||
-                            it.symbol.contains(query, ignoreCase = true)
-                    }
-                    LazyColumn(modifier = Modifier.fillMaxSize()) {
-                        items(filtered) { coin ->
-                            CoinItem(coin, onClick = { onCoinClick(coin) })
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        items(filtered){
+                            item -> CoinItem(item){onCoinClick(item)}
                         }
                     }
                 }
