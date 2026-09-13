@@ -2,6 +2,7 @@ package com.example.cryptotracker.ui.list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.cryptotracker.data.local.FavoritesDataStore
 import com.example.cryptotracker.domain.CoinRepository
 import com.example.cryptotracker.domain.model.Coin
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,7 +16,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CoinListViewModel @Inject constructor(
-    private val repository: CoinRepository
+    private val repository: CoinRepository,
+    private val favoritesDataStore: FavoritesDataStore
 ): ViewModel(){
 
     private val _uiState = MutableStateFlow<CoinListUiState>(CoinListUiState.Loading)
@@ -50,6 +52,17 @@ class CoinListViewModel @Inject constructor(
             } catch (e: Exception) {
                 _uiState.value = CoinListUiState.Error(e.message ?: "Ошибка сети")
             }
+        }
+    }
+    val favorites: StateFlow<Set<String>> = favoritesDataStore.observeFavorites()
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5000),
+            emptySet()
+        )
+    fun editFavorite(id: String){
+        viewModelScope.launch {
+            favoritesDataStore.editFavorites(id)
         }
     }
     init{

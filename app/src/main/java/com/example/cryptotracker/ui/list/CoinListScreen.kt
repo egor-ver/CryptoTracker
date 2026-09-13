@@ -18,6 +18,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -25,6 +26,7 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -36,7 +38,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.example.cryptotracker.domain.model.Coin
@@ -72,11 +73,17 @@ fun CoinListScreen(viewModel: CoinListViewModel, onCoinClick: (Coin) -> Unit) {
 
             when (val s = state) {
                 is CoinListUiState.Success -> {
+                    val favorites by viewModel.favorites.collectAsState()
                     LazyColumn(
                         modifier = Modifier.fillMaxSize()
                     ) {
                         items(filtered){
-                            item -> CoinItem(item){onCoinClick(item)}
+                            item -> CoinItem(
+                                coin = item,
+                                isFavorite = item.id in favorites,
+                                onClick = {onCoinClick(item)},
+                                onToggleFavorite = {viewModel.editFavorite(item.id)}
+                            )
                         }
                     }
                 }
@@ -102,7 +109,7 @@ fun CoinListScreen(viewModel: CoinListViewModel, onCoinClick: (Coin) -> Unit) {
 }
 
 @Composable
-fun CoinItem(coin: Coin, onClick: () -> Unit) {
+fun CoinItem(coin: Coin, onClick: () -> Unit, isFavorite: Boolean, onToggleFavorite: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -144,6 +151,14 @@ fun CoinItem(coin: Coin, onClick: () -> Unit) {
                 Spacer(Modifier.height(4.dp))
                 ChangePill(coin.priceChange)
             }
+            IconButton(onClick = onToggleFavorite) {
+                Icon(
+                    imageVector = Icons.Default.Star,
+                    contentDescription = if(isFavorite) "Убрать из избранного" else "В избранное",
+                    tint = if (isFavorite) MaterialTheme.colorScheme.primary
+                    else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f)
+                )
+            }
         }
     }
 }
@@ -164,11 +179,4 @@ fun ChangePill(change: Double) {
     )
 }
 
-@Preview(showBackground = true)
-@Composable
-fun CoinItemPreview() {
-    CoinItem(
-        Coin("btc", "BTC", "Bitcoin", "", 50000.0, 2.2),
-        onClick = {}
-    )
-}
+
