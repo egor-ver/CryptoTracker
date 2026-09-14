@@ -2,8 +2,8 @@ package com.example.cryptotracker.ui.list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.cryptotracker.data.local.FavoritesDataStore
 import com.example.cryptotracker.domain.CoinRepository
+import com.example.cryptotracker.domain.FavoritesRepository
 import com.example.cryptotracker.domain.model.Coin
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,7 +17,7 @@ import javax.inject.Inject
 @HiltViewModel
 class CoinListViewModel @Inject constructor(
     private val repository: CoinRepository,
-    private val favoritesDataStore: FavoritesDataStore
+    private val favoritesRepository: FavoritesRepository
 ): ViewModel(){
 
     private val _uiState = MutableStateFlow<CoinListUiState>(CoinListUiState.Loading)
@@ -54,7 +54,7 @@ class CoinListViewModel @Inject constructor(
             }
         }
     }
-    val favorites: StateFlow<Set<String>> = favoritesDataStore.observeFavorites()
+    val favorites: StateFlow<Set<String>> = favoritesRepository.observeFavorites()
         .stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(5000),
@@ -62,9 +62,19 @@ class CoinListViewModel @Inject constructor(
         )
     fun editFavorite(id: String){
         viewModelScope.launch {
-            favoritesDataStore.editFavorites(id)
+            favoritesRepository.editFavorites(id)
         }
     }
+    val favoriteCoins: StateFlow<List<Coin>> = uiState.combine(favorites){ uiState, favorite ->
+        if(uiState is CoinListUiState.Success){
+            uiState.coins.filter { it.id in favorite }
+        }
+        else emptyList()
+    }.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(5000),
+        emptyList()
+    )
     init{
         loadCoins()
     }

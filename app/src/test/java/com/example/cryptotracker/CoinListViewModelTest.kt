@@ -14,7 +14,7 @@ class CoinListViewModelTest {
 
     @Test
     fun `uiState Success test`() {
-        val viewModel = CoinListViewModel(FakeRepository())
+        val viewModel = CoinListViewModel(FakeRepository(), FakeFavoritesRepository())
 
         val state = viewModel.uiState.value
 

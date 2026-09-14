@@ -46,13 +46,19 @@ import com.example.cryptotracker.ui.theme.PriceUp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CoinListScreen(viewModel: CoinListViewModel, onCoinClick: (Coin) -> Unit) {
+fun CoinListScreen(viewModel: CoinListViewModel, onCoinClick: (Coin) -> Unit, onFavoriteClick: () -> Unit) {
     val filtered by viewModel.filteredCoins.collectAsState()
     val state by viewModel.uiState.collectAsState()
     val query by viewModel.searchState.collectAsState()
 
     Scaffold(
-        topBar = { CenterAlignedTopAppBar(title = { Text("Криптовалюты") }) }
+        topBar = { CenterAlignedTopAppBar(title = { Text("Криптовалюты") }, actions = {
+            IconButton(
+                onFavoriteClick
+            ) {
+                Icon(Icons.Default.Star, "Избранное")
+            }
+        }) }
     ) { innerPadding ->
         Column(
             modifier = Modifier

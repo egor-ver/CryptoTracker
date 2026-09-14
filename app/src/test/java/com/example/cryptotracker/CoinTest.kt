@@ -1,6 +1,7 @@
 package com.example.cryptotracker
 
 import com.example.cryptotracker.data.remote.dto.CoinDto
+import com.example.cryptotracker.data.local.mapper.toCoin
 import com.example.cryptotracker.data.remote.mapper.toCoin
 import org.junit.Test
 import kotlin.test.assertEquals

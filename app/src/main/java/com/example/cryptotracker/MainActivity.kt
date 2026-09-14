@@ -20,6 +20,7 @@ import com.example.cryptotracker.ui.list.CoinDetailScreen
 import com.example.cryptotracker.ui.list.CoinDetailUiState
 import com.example.cryptotracker.ui.list.CoinDetailViewModel
 import com.example.cryptotracker.ui.list.CoinListViewModel
+import com.example.cryptotracker.ui.list.FavoritesScreen
 import com.example.cryptotracker.ui.theme.CryptoTrackerTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -38,7 +39,10 @@ class MainActivity : ComponentActivity() {
                         CoinListScreen(
                             viewModel = viewModel,
                             onCoinClick = {coin ->
-                                navController.navigate("detail/${coin.id}")}
+                                navController.navigate("detail/${coin.id}")
+                            },
+                            onFavoriteClick = {navController.navigate("favorites")}
+
                         )
                     }
                     composable(
@@ -58,6 +62,13 @@ class MainActivity : ComponentActivity() {
                             is CoinDetailUiState.Error ->
                                 Text(s.message)
                         }
+                    }
+                    composable("favorites"){
+                        FavoritesScreen(
+                            viewModel = viewModel,
+                            onBackClick = {navController.popBackStack()},
+                            onCoinClick = {coin -> navController.navigate("detail/${coin.id}")}
+                        )
                     }
                 }
 
