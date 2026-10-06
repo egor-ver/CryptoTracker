@@ -12,6 +12,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
+import java.io.IOException
 import javax.inject.Inject
 
 @HiltViewModel
@@ -49,8 +51,10 @@ class CoinListViewModel @Inject constructor(
             try {
                 val coins = repository.getCoins()
                 _uiState.value = CoinListUiState.Success(coins)
-            } catch (e: Exception) {
-                _uiState.value = CoinListUiState.Error(e.message ?: "Ошибка сети")
+            } catch (e: IOException) {
+                _uiState.value = CoinListUiState.Error("Нет сети")
+            } catch (e: HttpException){
+                _uiState.value = CoinListUiState.Error("Ошибка сервера")
             }
         }
     }

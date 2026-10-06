@@ -8,6 +8,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import java.io.IOException
 import javax.inject.Inject
 
 @HiltViewModel
@@ -28,8 +29,11 @@ class CoinDetailViewModel @Inject constructor(
                     CoinDetailUiState.Error("Монета не найдена")
                 }
             }
-            catch (e: Exception){
-                _uiState.value = CoinDetailUiState.Error(e.message ?: "Неизвестная ошибка")
+            catch (e: IOException){
+                _uiState.value = CoinDetailUiState.Error("Нет сети")
+            }
+            catch (e: retrofit2.HttpException){
+                _uiState.value = CoinDetailUiState.Error("Ошибка сервера")
             }
         }
     }
