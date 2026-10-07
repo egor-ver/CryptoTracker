@@ -32,13 +32,13 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import com.example.cryptotracker.domain.model.Coin
 import com.example.cryptotracker.ui.theme.PriceDown
@@ -47,9 +47,9 @@ import com.example.cryptotracker.ui.theme.PriceUp
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CoinListScreen(viewModel: CoinListViewModel, onCoinClick: (Coin) -> Unit, onFavoriteClick: () -> Unit) {
-    val filtered by viewModel.filteredCoins.collectAsState()
-    val state by viewModel.uiState.collectAsState()
-    val query by viewModel.searchState.collectAsState()
+    val filtered by viewModel.filteredCoins.collectAsStateWithLifecycle()
+    val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val query by viewModel.searchState.collectAsStateWithLifecycle()
 
     Scaffold(
         topBar = { CenterAlignedTopAppBar(title = { Text("Криптовалюты") }, actions = {
@@ -79,7 +79,7 @@ fun CoinListScreen(viewModel: CoinListViewModel, onCoinClick: (Coin) -> Unit, on
 
             when (val s = state) {
                 is CoinListUiState.Success -> {
-                    val favorites by viewModel.favorites.collectAsState()
+                    val favorites by viewModel.favorites.collectAsStateWithLifecycle()
                     LazyColumn(
                         modifier = Modifier.fillMaxSize()
                     ) {

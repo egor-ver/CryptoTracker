@@ -7,9 +7,9 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -53,7 +53,7 @@ class MainActivity : ComponentActivity() {
 
                     ){
                         val detailViewModel: CoinDetailViewModel = hiltViewModel()
-                        val detailState by detailViewModel.uiState.collectAsState()
+                        val detailState by detailViewModel.uiState.collectAsStateWithLifecycle()
                         when (val s = detailState) {
                             is CoinDetailUiState.Success ->
                                 CoinDetailScreen(s.coin, onBackClick = { navController.popBackStack() },)

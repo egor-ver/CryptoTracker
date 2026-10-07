@@ -9,6 +9,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -23,10 +24,10 @@ class CoinListViewModel @Inject constructor(
 ): ViewModel(){
 
     private val _uiState = MutableStateFlow<CoinListUiState>(CoinListUiState.Loading)
-    val uiState: StateFlow<CoinListUiState> = _uiState
+    val uiState = _uiState.asStateFlow()
 
     private val _searchState = MutableStateFlow("")
-    val searchState: StateFlow<String> = _searchState
+    val searchState = _searchState.asStateFlow()
     val filteredCoins: StateFlow<List<Coin>> = _uiState.combine(_searchState){ ui, search ->
         if(ui is CoinListUiState.Success){
             ui.coins.filter {
