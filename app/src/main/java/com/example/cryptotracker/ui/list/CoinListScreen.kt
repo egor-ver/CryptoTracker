@@ -41,6 +41,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import com.example.cryptotracker.domain.model.Coin
+import com.example.cryptotracker.ui.format.formatChange
+import com.example.cryptotracker.ui.format.formatPrice
 import com.example.cryptotracker.ui.theme.PriceDown
 import com.example.cryptotracker.ui.theme.PriceUp
 
@@ -150,7 +152,7 @@ fun CoinItem(coin: Coin, onClick: () -> Unit, isFavorite: Boolean, onToggleFavor
             }
             Column(horizontalAlignment = Alignment.End) {
                 Text(
-                    text = "$${"%.2f".format(coin.price)}",
+                    text = formatPrice(coin.price),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
@@ -173,9 +175,8 @@ fun CoinItem(coin: Coin, onClick: () -> Unit, isFavorite: Boolean, onToggleFavor
 fun ChangePill(change: Double) {
     val up = change >= 0
     val color = if (up) PriceUp else PriceDown
-    val sign = if (up) "+" else ""
     Text(
-        text = "$sign${"%.2f".format(change)}%",
+        text = formatChange(change),
         style = MaterialTheme.typography.labelMedium,
         color = color,
         modifier = Modifier

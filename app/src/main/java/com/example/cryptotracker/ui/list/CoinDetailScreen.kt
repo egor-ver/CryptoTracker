@@ -31,6 +31,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.example.cryptotracker.domain.model.Coin
+import com.example.cryptotracker.ui.format.formatPrice
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -86,7 +87,7 @@ fun CoinDetailScreen(coin: Coin, onBackClick: () -> Unit) {
                     ) {
                         Text("Цена", color = MaterialTheme.colorScheme.onSurfaceVariant)
                         Text(
-                            text = "$${"%.2f".format(coin.price)}",
+                            text = formatPrice(coin.price),
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold
                         )
