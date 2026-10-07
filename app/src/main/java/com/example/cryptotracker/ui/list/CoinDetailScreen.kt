@@ -1,6 +1,7 @@
 package com.example.cryptotracker.ui.list
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -15,6 +16,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -35,7 +37,7 @@ import com.example.cryptotracker.ui.format.formatPrice
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CoinDetailScreen(coin: Coin, onBackClick: () -> Unit) {
+fun CoinDetailScreen(state: CoinDetailUiState, onBackClick: () -> Unit) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -48,59 +50,72 @@ fun CoinDetailScreen(coin: Coin, onBackClick: () -> Unit) {
             )
         }
     ) { innerPadding ->
-        Column(
+        val modifier = Modifier
+            .fillMaxSize()
+            .padding(innerPadding)
+        when (state) {
+            is CoinDetailUiState.Loading -> Box(modifier, contentAlignment = Alignment.Center) {
+                CircularProgressIndicator()
+            }
+            is CoinDetailUiState.Error -> Box(modifier, contentAlignment = Alignment.Center) {
+                Text(state.error.message())
+            }
+            is CoinDetailUiState.Success -> CoinDetailContent(state.coin, modifier)
+        }
+    }
+}
+
+@Composable
+private fun CoinDetailContent(coin: Coin, modifier: Modifier) {
+    Column(
+        modifier = modifier.padding(24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        AsyncImage(
+            model = coin.imageUrl,
+            contentDescription = coin.name,
             modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .padding(24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .size(72.dp)
+                .clip(CircleShape)
+        )
+        Spacer(Modifier.height(16.dp))
+        Text(
+            text = coin.name,
+            style = MaterialTheme.typography.headlineSmall,
+            fontWeight = FontWeight.Bold
+        )
+        Text(
+            text = coin.symbol.uppercase(),
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        Spacer(Modifier.height(24.dp))
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(16.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
         ) {
-            AsyncImage(
-                model = coin.imageUrl,
-                contentDescription = coin.name,
-                modifier = Modifier
-                    .size(72.dp)
-                    .clip(CircleShape)
-            )
-            Spacer(Modifier.height(16.dp))
-            Text(
-                text = coin.name,
-                style = MaterialTheme.typography.headlineSmall,
-                fontWeight = FontWeight.Bold
-            )
-            Text(
-                text = coin.symbol.uppercase(),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            Spacer(Modifier.height(24.dp))
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp),
-                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-            ) {
-                Column(Modifier.padding(20.dp)) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text("Цена", color = MaterialTheme.colorScheme.onSurfaceVariant)
-                        Text(
-                            text = formatPrice(coin.price),
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-                    Spacer(Modifier.height(12.dp))
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text("Изменение за 24ч", color = MaterialTheme.colorScheme.onSurfaceVariant)
-                        ChangePill(coin.priceChange)
-                    }
+            Column(Modifier.padding(20.dp)) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text("Цена", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(
+                        text = formatPrice(coin.price),
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+                Spacer(Modifier.height(12.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text("Изменение за 24ч", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    ChangePill(coin.priceChange)
                 }
             }
         }
@@ -110,5 +125,5 @@ fun CoinDetailScreen(coin: Coin, onBackClick: () -> Unit) {
 @Preview(showBackground = true)
 @Composable
 fun CoinDetailPreview() {
-    CoinDetailScreen(Coin("btc", "BTC", "Bitcoin", "", 50000.0, 2.2)) {}
+    CoinDetailScreen(CoinDetailUiState.Success(Coin("btc", "BTC", "Bitcoin", "", 50000.0, 2.2))) {}
 }

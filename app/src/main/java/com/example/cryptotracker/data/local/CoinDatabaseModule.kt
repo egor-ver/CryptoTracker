@@ -15,7 +15,10 @@ object CoinDatabaseModule {
     @Provides
     @Singleton
     fun provideDatabase(@ApplicationContext context: Context): CoinDatabase{
-        return Room.databaseBuilder(context, CoinDatabase::class.java, "coins.db").build()
+        // Это только кэш с сервера, поэтому при смене схемы базу проще пересоздать, чем писать миграции
+        return Room.databaseBuilder(context, CoinDatabase::class.java, "coins.db")
+            .fallbackToDestructiveMigration(dropAllTables = true)
+            .build()
     }
 
     @Provides

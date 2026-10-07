@@ -7,7 +7,6 @@ import androidx.datastore.preferences.preferencesDataStore
 import com.example.cryptotracker.domain.FavoritesRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 

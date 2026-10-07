@@ -40,7 +40,6 @@ android {
 }
 
 dependencies {
-    implementation(libs.androidx.constraintlayout)
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
     implementation(libs.androidx.datastore.preferences)
@@ -62,8 +61,6 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation("com.squareup.retrofit2:retrofit:3.0.0")
     implementation("com.squareup.retrofit2:converter-gson:3.0.0")
-    implementation(libs.androidx.material3)
-    implementation("androidx.navigation:navigation-compose:2.9.6")
     implementation(libs.androidx.navigation.compose)
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1")
     testImplementation(libs.junit)

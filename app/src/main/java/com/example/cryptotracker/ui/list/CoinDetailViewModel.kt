@@ -22,7 +22,7 @@ class CoinDetailViewModel @Inject constructor(
         viewModelScope.launch {
             val selectedCoin = coinId?.let { repository.getCoin(it) }
             _uiState.value = if(selectedCoin != null) CoinDetailUiState.Success(selectedCoin)
-            else CoinDetailUiState.Error("Монета не найдена")
+            else CoinDetailUiState.Error(LoadError.NOT_FOUND)
         }
     }
     init{

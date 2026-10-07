@@ -1,6 +1,5 @@
 package com.example.cryptotracker.data.local
 
-import androidx.collection.DoubleList
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 

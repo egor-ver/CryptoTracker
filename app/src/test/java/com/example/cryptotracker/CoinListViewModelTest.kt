@@ -2,6 +2,7 @@ package com.example.cryptotracker
 
 import com.example.cryptotracker.ui.list.CoinListUiState
 import com.example.cryptotracker.ui.list.CoinListViewModel
+import com.example.cryptotracker.ui.list.LoadError
 import java.io.IOException
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -34,7 +35,7 @@ class CoinListViewModelTest {
         val viewModel = CoinListViewModel(fakeRepository, FakeFavoritesRepository())
         advanceUntilIdle()
         val uiState = viewModel.uiState
-        assertEquals(CoinListUiState.Error("Нет сети"), uiState.value)
+        assertEquals(CoinListUiState.Error(LoadError.NETWORK), uiState.value)
     }
     @Test
     fun `после retry репозиторий вызван дважды`() = runTest(mainDispatcherRule.testDispatcher){

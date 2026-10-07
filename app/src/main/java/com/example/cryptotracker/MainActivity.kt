@@ -5,8 +5,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Text
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -17,7 +15,6 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.cryptotracker.ui.list.CoinListScreen
 import com.example.cryptotracker.ui.list.CoinDetailScreen
-import com.example.cryptotracker.ui.list.CoinDetailUiState
 import com.example.cryptotracker.ui.list.CoinDetailViewModel
 import com.example.cryptotracker.ui.list.CoinListViewModel
 import com.example.cryptotracker.ui.list.FavoritesScreen
@@ -54,14 +51,7 @@ class MainActivity : ComponentActivity() {
                     ){
                         val detailViewModel: CoinDetailViewModel = hiltViewModel()
                         val detailState by detailViewModel.uiState.collectAsStateWithLifecycle()
-                        when (val s = detailState) {
-                            is CoinDetailUiState.Success ->
-                                CoinDetailScreen(s.coin, onBackClick = { navController.popBackStack() },)
-                            is CoinDetailUiState.Loading ->
-                                CircularProgressIndicator()
-                            is CoinDetailUiState.Error ->
-                                Text(s.message)
-                        }
+                        CoinDetailScreen(detailState, onBackClick = { navController.popBackStack() })
                     }
                     composable("favorites"){
                         FavoritesScreen(

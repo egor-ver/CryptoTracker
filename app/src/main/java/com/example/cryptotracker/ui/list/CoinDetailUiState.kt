@@ -4,6 +4,6 @@ import com.example.cryptotracker.domain.model.Coin
 
 sealed interface CoinDetailUiState {
     data class Success(val coin: Coin): CoinDetailUiState
-    data class Error(val message: String) : CoinDetailUiState
+    data class Error(val error: LoadError) : CoinDetailUiState
     object Loading: CoinDetailUiState
 }

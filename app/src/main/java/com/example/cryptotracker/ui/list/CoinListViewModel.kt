@@ -53,9 +53,9 @@ class CoinListViewModel @Inject constructor(
                 val coins = repository.getCoins()
                 _uiState.value = CoinListUiState.Success(coins)
             } catch (e: IOException) {
-                _uiState.value = CoinListUiState.Error("Нет сети")
+                _uiState.value = CoinListUiState.Error(LoadError.NETWORK)
             } catch (e: HttpException){
-                _uiState.value = CoinListUiState.Error("Ошибка сервера")
+                _uiState.value = CoinListUiState.Error(LoadError.SERVER)
             }
         }
     }

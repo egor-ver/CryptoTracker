@@ -106,7 +106,7 @@ fun CoinListScreen(viewModel: CoinListViewModel, onCoinClick: (Coin) -> Unit, on
                     contentAlignment = Alignment.Center
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text("Ошибка: ${s.message}")
+                        Text("Ошибка: ${s.error.message()}")
                         Spacer(Modifier.height(12.dp))
                         Button(onClick = { viewModel.retry() }) { Text("Повторить") }
                     }
