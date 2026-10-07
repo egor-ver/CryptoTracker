@@ -26,13 +26,16 @@ class CoinRepositoryImpl @Inject constructor(
     override suspend fun getCoins(): List<Coin> {
         return try{
             val coins = api.getCoins().map { it.toCoin() }
-            dao.insertAll(coins.map { it.toEntity() })
+            dao.replaceAll(coins.map{it.toEntity()})
             coins
         } catch (e: IOException){
             loadFromRoom(e)
         } catch (e: HttpException){
             loadFromRoom(e)
         }
+    }
 
+    override suspend fun getCoin(id: String): Coin? {
+        return dao.getCoinById(id)?.toCoin()
     }
 }

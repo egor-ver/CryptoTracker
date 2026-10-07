@@ -6,35 +6,23 @@ import androidx.lifecycle.viewModelScope
 import com.example.cryptotracker.domain.CoinRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import java.io.IOException
 import javax.inject.Inject
 
 @HiltViewModel
 class CoinDetailViewModel @Inject constructor(
     private val repository: CoinRepository,
-    private val savedStateHandle: SavedStateHandle
+    savedStateHandle: SavedStateHandle
 ): ViewModel() {
     val coinId = savedStateHandle.get<String>("coinId")
     private val _uiState = MutableStateFlow<CoinDetailUiState>(CoinDetailUiState.Loading)
-    val uiState: StateFlow<CoinDetailUiState> = _uiState
+    val uiState = _uiState.asStateFlow()
     private fun loadCoin(){
         viewModelScope.launch {
-            try{
-                val selectedCoin = repository.getCoins().find { it.id == coinId }
-                _uiState.value = if (selectedCoin != null) {
-                    CoinDetailUiState.Success(selectedCoin)
-                } else {
-                    CoinDetailUiState.Error("Монета не найдена")
-                }
-            }
-            catch (e: IOException){
-                _uiState.value = CoinDetailUiState.Error("Нет сети")
-            }
-            catch (e: retrofit2.HttpException){
-                _uiState.value = CoinDetailUiState.Error("Ошибка сервера")
-            }
+            val selectedCoin = coinId?.let { repository.getCoin(it) }
+            _uiState.value = if(selectedCoin != null) CoinDetailUiState.Success(selectedCoin)
+            else CoinDetailUiState.Error("Монета не найдена")
         }
     }
     init{

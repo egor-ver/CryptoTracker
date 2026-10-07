@@ -16,4 +16,13 @@ class FakeCoinDao: CoinDao {
     override suspend fun insertAll(coins: List<CoinEntity>) {
         stored.addAll(coins)
     }
+
+    override suspend fun replaceAll(coins: List<CoinEntity>) {
+        stored.clear()
+        stored.addAll(coins)
+    }
+
+    override suspend fun getCoinById(id: String): CoinEntity? {
+        return stored.find { it.id == id }
+    }
 }
