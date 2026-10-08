@@ -11,16 +11,20 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.cryptotracker.domain.model.Coin
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FavoritesScreen(viewModel: CoinListViewModel, onBackClick: () -> Unit, onCoinClick: (Coin) -> Unit){
-    val favorites by viewModel.favoriteCoins.collectAsStateWithLifecycle()
+fun FavoritesScreen(
+    state: CoinListUiState,
+    favorites: List<Coin>,
+    onBackClick: () -> Unit,
+    onCoinClick: (Coin) -> Unit,
+    onToggleFavorite: (Coin) -> Unit,
+    onRetry: () -> Unit
+){
     Scaffold(
         topBar = {
             TopAppBar(
@@ -35,29 +39,31 @@ fun FavoritesScreen(viewModel: CoinListViewModel, onBackClick: () -> Unit, onCoi
             )
         }
     ) { innerPadding ->
-        if(favorites.isEmpty()){
-            Box(
-                Modifier.fillMaxSize().padding(innerPadding),
-                contentAlignment = Alignment.Center
-            ){
-                Text("Пока нет избранных монет")
-            }
-        } else{
-            LazyColumn(Modifier.fillMaxSize().padding(innerPadding)) {
-                items(favorites){ coin ->
-                    CoinItem(
-                        coin = coin,
-                        isFavorite = true,
-                        onClick = {onCoinClick(coin)},
-                        onToggleFavorite = {viewModel.editFavorite((coin.id))}
-                    )
+        val modifier = Modifier.fillMaxSize().padding(innerPadding)
+        // Избранное собирается из общего списка монет: пока он грузится или упал,
+        // писать «Пока нет избранных» нельзя, избранные есть, просто ещё не пришли.
+        when (state) {
+            is CoinListUiState.Loading -> LoadingBox(modifier)
+            is CoinListUiState.Error -> ErrorWithRetry(state.error, onRetry, modifier)
+            is CoinListUiState.Success -> if(favorites.isEmpty()){
+                Box(
+                    modifier,
+                    contentAlignment = Alignment.Center
+                ){
+                    Text("Пока нет избранных монет")
+                }
+            } else{
+                LazyColumn(modifier) {
+                    items(favorites){ coin ->
+                        CoinItem(
+                            coin = coin,
+                            isFavorite = true,
+                            onClick = {onCoinClick(coin)},
+                            onToggleFavorite = {onToggleFavorite(coin)}
+                        )
+                    }
                 }
             }
         }
-
     }
 }
-
-
-
-

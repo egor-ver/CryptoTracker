@@ -8,7 +8,7 @@ fun CoinDto.toCoin(): Coin{
         id = id,
         name = name,
         imageUrl = image,
-        price = current_price ?: 0.0,
+        price = current_price,
         priceChange = price_change_percentage_24h ?: 0.0,
         symbol = symbol
     )

@@ -7,6 +7,7 @@ import com.example.cryptotracker.data.remote.dto.CoinDto
 import com.example.cryptotracker.data.remote.mapper.toCoin
 import com.example.cryptotracker.domain.model.Coin
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 
 import org.junit.Test
 
@@ -34,9 +35,9 @@ class CoinMapperTest {
         assertEquals(expectedCoin, coin)
     }
     @Test
-    fun `когда текущая цена null цена становится 0`(){
+    fun `когда текущая цена null цена остаётся null`(){
         val changedDto = dto.copy(current_price = null)
-        assertEquals(0.0, changedDto.toCoin().price, 0.0001)
+        assertNull(changedDto.toCoin().price)
     }
     @Test
     fun `когда изменение цены за 24ч null маппер возвращает 0`(){

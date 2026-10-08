@@ -32,13 +32,11 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import com.example.cryptotracker.domain.model.Coin
 import com.example.cryptotracker.ui.format.formatChange
@@ -48,15 +46,21 @@ import com.example.cryptotracker.ui.theme.PriceUp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CoinListScreen(viewModel: CoinListViewModel, onCoinClick: (Coin) -> Unit, onFavoriteClick: () -> Unit) {
-    val filtered by viewModel.filteredCoins.collectAsStateWithLifecycle()
-    val state by viewModel.uiState.collectAsStateWithLifecycle()
-    val query by viewModel.searchState.collectAsStateWithLifecycle()
-
+fun CoinListScreen(
+    state: CoinListUiState,
+    coins: List<Coin>,
+    favorites: Set<String>,
+    query: String,
+    onQueryChange: (String) -> Unit,
+    onCoinClick: (Coin) -> Unit,
+    onToggleFavorite: (Coin) -> Unit,
+    onRetry: () -> Unit,
+    onFavoritesClick: () -> Unit
+) {
     Scaffold(
         topBar = { CenterAlignedTopAppBar(title = { Text("Криптовалюты") }, actions = {
             IconButton(
-                onFavoriteClick
+                onFavoritesClick
             ) {
                 Icon(Icons.Default.Star, "Избранное")
             }
@@ -69,7 +73,7 @@ fun CoinListScreen(viewModel: CoinListViewModel, onCoinClick: (Coin) -> Unit, on
         ) {
             OutlinedTextField(
                 value = query,
-                onValueChange = { viewModel.onQueryChanged(it) },
+                onValueChange = onQueryChange,
                 placeholder = { Text("Поиск монеты") },
                 leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
                 singleLine = true,
@@ -79,39 +83,42 @@ fun CoinListScreen(viewModel: CoinListViewModel, onCoinClick: (Coin) -> Unit, on
                     .padding(horizontal = 16.dp, vertical = 8.dp)
             )
 
-            when (val s = state) {
+            when (state) {
                 is CoinListUiState.Success -> {
-                    val favorites by viewModel.favorites.collectAsStateWithLifecycle()
                     LazyColumn(
                         modifier = Modifier.fillMaxSize()
                     ) {
-                        items(filtered){
+                        items(coins){
                             item -> CoinItem(
                                 coin = item,
                                 isFavorite = item.id in favorites,
                                 onClick = {onCoinClick(item)},
-                                onToggleFavorite = {viewModel.editFavorite(item.id)}
+                                onToggleFavorite = {onToggleFavorite(item)}
                             )
                         }
                     }
                 }
 
-                is CoinListUiState.Loading -> Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) { CircularProgressIndicator() }
+                is CoinListUiState.Loading -> LoadingBox(Modifier.fillMaxSize())
 
-                is CoinListUiState.Error -> Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text("Ошибка: ${s.error.message()}")
-                        Spacer(Modifier.height(12.dp))
-                        Button(onClick = { viewModel.retry() }) { Text("Повторить") }
-                    }
-                }
+                is CoinListUiState.Error -> ErrorWithRetry(state.error, onRetry, Modifier.fillMaxSize())
             }
+        }
+    }
+}
+
+@Composable
+fun LoadingBox(modifier: Modifier) {
+    Box(modifier, contentAlignment = Alignment.Center) { CircularProgressIndicator() }
+}
+
+@Composable
+fun ErrorWithRetry(error: LoadError, onRetry: () -> Unit, modifier: Modifier) {
+    Box(modifier, contentAlignment = Alignment.Center) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text("Ошибка: ${error.message()}")
+            Spacer(Modifier.height(12.dp))
+            Button(onClick = onRetry) { Text("Повторить") }
         }
     }
 }

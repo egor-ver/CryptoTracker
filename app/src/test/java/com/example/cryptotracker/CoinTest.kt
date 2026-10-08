@@ -19,7 +19,7 @@ class CoinTest {
         )
         val coin = dto.toCoin()
         assertEquals("id_1", coin.id)
-        assertEquals(50000.0, coin.price, 0.0)
+        assertEquals(50000.0, coin.price)
         assertEquals("image_url", coin.imageUrl)
         assertEquals("Bitcoin", coin.name)
         assertEquals(2.2, coin.priceChange, 0.0)

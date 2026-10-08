@@ -33,13 +33,22 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
                 NavHost(navController, "list") {
                     composable("list"){
+                        val state by viewModel.uiState.collectAsStateWithLifecycle()
+                        val coins by viewModel.filteredCoins.collectAsStateWithLifecycle()
+                        val favorites by viewModel.favorites.collectAsStateWithLifecycle()
+                        val query by viewModel.searchState.collectAsStateWithLifecycle()
                         CoinListScreen(
-                            viewModel = viewModel,
+                            state = state,
+                            coins = coins,
+                            favorites = favorites,
+                            query = query,
+                            onQueryChange = viewModel::onQueryChanged,
                             onCoinClick = {coin ->
                                 navController.navigate("detail/${coin.id}")
                             },
-                            onFavoriteClick = {navController.navigate("favorites")}
-
+                            onToggleFavorite = {coin -> viewModel.editFavorite(coin.id)},
+                            onRetry = viewModel::retry,
+                            onFavoritesClick = {navController.navigate("favorites")}
                         )
                     }
                     composable(
@@ -54,10 +63,15 @@ class MainActivity : ComponentActivity() {
                         CoinDetailScreen(detailState, onBackClick = { navController.popBackStack() })
                     }
                     composable("favorites"){
+                        val state by viewModel.uiState.collectAsStateWithLifecycle()
+                        val favorites by viewModel.favoriteCoins.collectAsStateWithLifecycle()
                         FavoritesScreen(
-                            viewModel = viewModel,
+                            state = state,
+                            favorites = favorites,
                             onBackClick = {navController.popBackStack()},
-                            onCoinClick = {coin -> navController.navigate("detail/${coin.id}")}
+                            onCoinClick = {coin -> navController.navigate("detail/${coin.id}")},
+                            onToggleFavorite = {coin -> viewModel.editFavorite(coin.id)},
+                            onRetry = viewModel::retry
                         )
                     }
                 }

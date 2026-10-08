@@ -9,6 +9,6 @@ data class CoinEntity (
     val symbol: String,
     val name: String,
     val imageUrl: String,
-    val price: Double,
+    val price: Double?,
     val priceChange: Double
 )

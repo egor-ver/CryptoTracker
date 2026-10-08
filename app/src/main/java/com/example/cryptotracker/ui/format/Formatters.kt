@@ -4,8 +4,9 @@ import java.math.MathContext
 import java.util.Locale
 
 // Цены в долларах, поэтому формат всегда US: точка и запятая-разделитель тысяч
-// не зависят от языка телефона.
-fun formatPrice(price: Double): String {
+// не зависят от языка телефона. Если API не прислал цену, показываем прочерк, а не $0.00.
+fun formatPrice(price: Double?): String {
+    if (price == null) return "—"
     val number = if (price >= 1) {
         String.format(Locale.US, "%,.2f", price)
     } else {
