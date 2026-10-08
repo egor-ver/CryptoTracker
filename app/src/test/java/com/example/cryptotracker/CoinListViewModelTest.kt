@@ -6,6 +6,10 @@ import com.example.cryptotracker.ui.list.LoadError
 import java.io.IOException
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.launch
+import okhttp3.ResponseBody.Companion.toResponseBody
+import retrofit2.HttpException
+import retrofit2.Response
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
@@ -36,6 +40,25 @@ class CoinListViewModelTest {
         advanceUntilIdle()
         val uiState = viewModel.uiState
         assertEquals(CoinListUiState.Error(LoadError.NETWORK), uiState.value)
+    }
+    @Test
+    fun `uiState ошибка сервера при HttpException`() = runTest(mainDispatcherRule.testDispatcher){
+        val error = HttpException(Response.error<Any>(500, "".toResponseBody(null)))
+        val viewModel = CoinListViewModel(FakeRepository(error), FakeFavoritesRepository())
+        advanceUntilIdle()
+        assertEquals(CoinListUiState.Error(LoadError.SERVER), viewModel.uiState.value)
+    }
+    @Test
+    fun `в избранном только отмеченные монеты`() = runTest(mainDispatcherRule.testDispatcher){
+        val viewModel = CoinListViewModel(FakeRepository(), FakeFavoritesRepository())
+        // favoriteCoins считается только пока на него кто-то подписан (WhileSubscribed)
+        backgroundScope.launch { viewModel.favoriteCoins.collect {} }
+        advanceUntilIdle()
+
+        viewModel.editFavorite("id_2")
+        advanceUntilIdle()
+
+        assertEquals(listOf("id_2"), viewModel.favoriteCoins.value.map { it.id })
     }
     @Test
     fun `после retry репозиторий вызван дважды`() = runTest(mainDispatcherRule.testDispatcher){

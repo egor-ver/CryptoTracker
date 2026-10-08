@@ -21,6 +21,11 @@ class FormattersTest {
     }
 
     @Test
+    fun `неизвестная цена показывается прочерком`() {
+        assertEquals("—", formatPrice(null))
+    }
+
+    @Test
     fun `изменение со знаком`() {
         assertEquals("+2.50%", formatChange(2.5))
         assertEquals("-1.20%", formatChange(-1.2))

@@ -1,5 +1,6 @@
 package com.example.cryptotracker
 
+import com.example.cryptotracker.data.local.CoinEntity
 import com.example.cryptotracker.data.repository.CoinRepositoryImpl
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
@@ -18,6 +19,16 @@ class CoinRepositoryImplTest {
         assertEquals("1", result[0].id)
         assertEquals(1, dao.stored.size)
         assertEquals("1", dao.stored[0].id)
+    }
+    @Test
+    fun `когда нет сети, но кэш есть, отдаётся кэш`() = runTest{
+        dao.stored.add(CoinEntity(
+            id = "cached", symbol = "ETH", name = "Ethereum",
+            imageUrl = "url", price = 3000.0, priceChange = 1.0
+        ))
+        api.error = IOException()
+        val result = repository.getCoins()
+        assertEquals(listOf("cached"), result.map { it.id })
     }
     @Test
     fun `когда нет сети и кэш пуст бросается IOException`() = runTest{
