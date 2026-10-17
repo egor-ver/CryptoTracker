@@ -1,0 +1,40 @@
+# Название, которое видно во вкладке Actions на GitHub
+name: CI
+
+# Когда запускать: пуш в master и любой pull request в master
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    # Чистая машина с Linux, которую GitHub даёт бесплатно
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Скачать код репозитория на эту машину
+      - uses: actions/checkout@v4
+
+      # 2. Поставить Java: без неё Gradle не запустится (AGP 9 требует 17+)
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      # 3. Настроить Gradle и кэш зависимостей, чтобы следующие запуски были быстрее
+      - uses: gradle/actions/setup-gradle@v4
+
+      # 4. В репо gradlew лежит без права на запуск (коммиты из Windows), даём его
+      - run: chmod +x gradlew
+
+      # 5. Собрать debug-APK и прогнать unit-тесты
+      - run: ./gradlew assembleDebug testDebugUnitTest
+
+      # 6. Если тесты упали, сохранить HTML-отчёт, чтобы скачать его со страницы запуска
+      - if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-report
+          path: app/build/reports/tests/
