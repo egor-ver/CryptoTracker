@@ -13,11 +13,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.cryptotracker.ui.list.CoinListScreen
-import com.example.cryptotracker.ui.list.CoinDetailScreen
-import com.example.cryptotracker.ui.list.CoinDetailViewModel
-import com.example.cryptotracker.ui.list.CoinListViewModel
-import com.example.cryptotracker.ui.list.FavoritesScreen
+import com.example.cryptotracker.ui.coinlist.CoinListScreen
+import com.example.cryptotracker.ui.coinlist.CoinListViewModel
+import com.example.cryptotracker.ui.detail.CoinDetailScreen
+import com.example.cryptotracker.ui.detail.CoinDetailViewModel
+import com.example.cryptotracker.ui.favorites.FavoritesScreen
 import com.example.cryptotracker.ui.theme.CryptoTrackerTheme
 import dagger.hilt.android.AndroidEntryPoint
 

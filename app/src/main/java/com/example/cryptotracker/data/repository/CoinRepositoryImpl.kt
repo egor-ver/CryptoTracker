@@ -1,16 +1,14 @@
 package com.example.cryptotracker.data.repository
 
-
-import com.example.cryptotracker.data.local.CoinDao
+import com.example.cryptotracker.data.local.db.CoinDao
 import com.example.cryptotracker.data.local.mapper.toCoin
 import com.example.cryptotracker.data.local.mapper.toEntity
 import com.example.cryptotracker.data.remote.CoinApi
 import com.example.cryptotracker.data.remote.mapper.toCoin
-import com.example.cryptotracker.domain.CoinRepository
 import com.example.cryptotracker.domain.model.Coin
+import com.example.cryptotracker.domain.repository.CoinRepository
 import retrofit2.HttpException
 import java.io.IOException
-
 import javax.inject.Inject
 
 class CoinRepositoryImpl @Inject constructor(

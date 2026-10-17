@@ -1,6 +1,6 @@
 package com.example.cryptotracker.data.local.mapper
 
-import com.example.cryptotracker.data.local.CoinEntity
+import com.example.cryptotracker.data.local.db.CoinEntity
 import com.example.cryptotracker.domain.model.Coin
 
 fun Coin.toEntity(): CoinEntity{
