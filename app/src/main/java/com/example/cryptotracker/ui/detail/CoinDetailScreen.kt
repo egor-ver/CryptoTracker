@@ -112,19 +112,6 @@ private fun CoinDetailContent(coin: Coin, modifier: Modifier) {
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text("Цена", color = MaterialTheme.colorScheme.onSurfaceVariant)
-                    Text(
-                        text = formatPrice(coin.price),
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                }
-                Spacer(Modifier.height(12.dp))
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
                     Text("Изменение за 24ч", color = MaterialTheme.colorScheme.onSurfaceVariant)
                     ChangePill(coin.priceChange)
                 }
