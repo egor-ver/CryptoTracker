@@ -70,4 +70,59 @@ class CoinListViewModelTest {
         val callCount = fakeRepository.callCount
         assertEquals(2, callCount)
     }
+    @Test
+    fun `поиск ищет по названию без учёта регистра`() = runTest(mainDispatcherRule.testDispatcher){
+        val viewModel = CoinListViewModel(FakeRepository(), FakeFavoritesRepository())
+        backgroundScope.launch { viewModel.filteredCoins.collect {} }
+        advanceUntilIdle()
+
+        viewModel.onQueryChanged("bit")
+        advanceUntilIdle()
+
+        assertEquals(listOf("id_1"), viewModel.filteredCoins.value.map { it.id })
+    }
+    @Test
+    fun `поиск ищет по тикеру`() = runTest(mainDispatcherRule.testDispatcher){
+        val viewModel = CoinListViewModel(FakeRepository(), FakeFavoritesRepository())
+        backgroundScope.launch { viewModel.filteredCoins.collect {} }
+        advanceUntilIdle()
+
+        viewModel.onQueryChanged("eth")
+        advanceUntilIdle()
+
+        assertEquals(listOf("id_2"), viewModel.filteredCoins.value.map { it.id })
+    }
+    @Test
+    fun `пустой запрос показывает все монеты, а несуществующий ни одной`() = runTest(mainDispatcherRule.testDispatcher){
+        val viewModel = CoinListViewModel(FakeRepository(), FakeFavoritesRepository())
+        backgroundScope.launch { viewModel.filteredCoins.collect {} }
+        advanceUntilIdle()
+        assertEquals(2, viewModel.filteredCoins.value.size)
+
+        viewModel.onQueryChanged("zzz")
+        advanceUntilIdle()
+
+        assertTrue(viewModel.filteredCoins.value.isEmpty())
+    }
+    @Test
+    fun `второй вызов editFavorite убирает монету из избранного`() = runTest(mainDispatcherRule.testDispatcher){
+        val viewModel = CoinListViewModel(FakeRepository(), FakeFavoritesRepository())
+        backgroundScope.launch { viewModel.favoriteCoins.collect {} }
+        advanceUntilIdle()
+
+        viewModel.editFavorite("id_1")
+        advanceUntilIdle()
+        viewModel.editFavorite("id_1")
+        advanceUntilIdle()
+
+        assertTrue(viewModel.favoriteCoins.value.isEmpty())
+    }
+    @Test
+    fun `retry во время загрузки не запускает вторую загрузку`() = runTest(mainDispatcherRule.testDispatcher){
+        val fakeRepository = FakeRepository()
+        val viewModel = CoinListViewModel(fakeRepository, FakeFavoritesRepository())
+        viewModel.retry()
+        advanceUntilIdle()
+        assertEquals(1, fakeRepository.callCount)
+    }
 }

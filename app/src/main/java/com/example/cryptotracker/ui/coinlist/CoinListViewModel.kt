@@ -7,6 +7,7 @@ import com.example.cryptotracker.domain.repository.CoinRepository
 import com.example.cryptotracker.domain.repository.FavoritesRepository
 import com.example.cryptotracker.ui.common.LoadError
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -47,9 +48,13 @@ class CoinListViewModel @Inject constructor(
         _searchState.value = query
     }
 
+    private var loadJob: Job? = null
+
     private fun loadCoins(){
+        // Повторный тап по «Повторить» во время загрузки не запускает вторую загрузку
+        if(loadJob?.isActive == true) return
         _uiState.value = CoinListUiState.Loading
-        viewModelScope.launch {
+        loadJob = viewModelScope.launch {
             try {
                 val coins = repository.getCoins()
                 _uiState.value = CoinListUiState.Success(coins)
