@@ -14,7 +14,7 @@
 
 ## Скриншоты
 
-<img src="screenshots/list.png" width="250"/>&nbsp;&nbsp;<img src="screenshots/detail.png" width="250"/>
+<img src="screenshots/list.png" width="220"/>&nbsp;&nbsp;<img src="screenshots/favorites.png" width="220"/>&nbsp;&nbsp;<img src="screenshots/detail.png" width="220"/>
 
 ## Стек
 
