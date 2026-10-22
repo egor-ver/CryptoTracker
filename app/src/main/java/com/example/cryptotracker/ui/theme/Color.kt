@@ -13,3 +13,5 @@ val Pink40 = Color(0xFF7D5260)
 val PriceUp = Color(0xFF2E7D32)
 
 val PriceDown = Color(0xFFC62828)
+
+val FavoriteStar = Color(0xFFFFB300)

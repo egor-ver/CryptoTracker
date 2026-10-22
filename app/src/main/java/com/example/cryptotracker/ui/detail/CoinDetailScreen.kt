@@ -91,11 +91,20 @@ private fun CoinDetailContent(coin: Coin, modifier: Modifier) {
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
+        Spacer(Modifier.height(16.dp))
+        Text(
+            text = formatPrice(coin.price),
+            style = MaterialTheme.typography.displaySmall,
+            fontWeight = FontWeight.Bold
+        )
         Spacer(Modifier.height(24.dp))
         Card(
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(16.dp),
-            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+            shape = RoundedCornerShape(20.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surfaceContainerLow
+            ),
+            elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
         ) {
             Column(Modifier.padding(20.dp)) {
                 Row(
@@ -107,7 +116,7 @@ private fun CoinDetailContent(coin: Coin, modifier: Modifier) {
                     Text(
                         text = formatPrice(coin.price),
                         style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.SemiBold
                     )
                 }
                 Spacer(Modifier.height(12.dp))

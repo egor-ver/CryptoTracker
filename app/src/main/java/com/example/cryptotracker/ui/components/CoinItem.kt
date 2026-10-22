@@ -14,6 +14,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -30,6 +31,7 @@ import coil3.compose.AsyncImage
 import com.example.cryptotracker.domain.model.Coin
 import com.example.cryptotracker.ui.common.formatChange
 import com.example.cryptotracker.ui.common.formatPrice
+import com.example.cryptotracker.ui.theme.FavoriteStar
 import com.example.cryptotracker.ui.theme.PriceDown
 import com.example.cryptotracker.ui.theme.PriceUp
 
@@ -40,11 +42,14 @@ fun CoinItem(coin: Coin, onClick: () -> Unit, isFavorite: Boolean, onToggleFavor
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 6.dp)
             .clickable { onClick() },
-        shape = RoundedCornerShape(16.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        shape = RoundedCornerShape(20.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainerLow
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
         Row(
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier.padding(start = 16.dp, top = 12.dp, bottom = 12.dp, end = 4.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             AsyncImage(
@@ -78,10 +83,10 @@ fun CoinItem(coin: Coin, onClick: () -> Unit, isFavorite: Boolean, onToggleFavor
             }
             IconButton(onClick = onToggleFavorite) {
                 Icon(
-                    imageVector = Icons.Default.Star,
+                    imageVector = if (isFavorite) Icons.Filled.Star else Icons.Outlined.Star,
                     contentDescription = if(isFavorite) "Убрать из избранного" else "В избранное",
-                    tint = if (isFavorite) MaterialTheme.colorScheme.primary
-                    else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f)
+                    tint = if (isFavorite) FavoriteStar
+                    else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
                 )
             }
         }
