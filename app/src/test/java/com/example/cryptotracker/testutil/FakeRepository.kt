@@ -36,6 +36,13 @@ class FakeRepository(
         return coins
     }
 
+    var refreshCount = 0
+        private set
+    override suspend fun refreshCoins() {
+        refreshCount++
+        error?.let { throw it }
+    }
+
     override suspend fun getCoin(id: String): Coin? {
         return coins.find { it.id == id }
     }

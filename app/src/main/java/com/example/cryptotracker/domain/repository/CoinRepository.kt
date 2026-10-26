@@ -6,6 +6,7 @@ import com.example.cryptotracker.domain.model.PricePoint
 
 interface CoinRepository{
     suspend fun getCoins(): List<Coin>
+    suspend fun refreshCoins()
     suspend fun getCoin(id: String): Coin?
     suspend fun getPriceHistory(id: String, period: ChartPeriod): List<PricePoint>
 }

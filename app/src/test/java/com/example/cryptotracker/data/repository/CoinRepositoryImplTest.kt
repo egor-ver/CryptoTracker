@@ -55,6 +55,26 @@ class CoinRepositoryImplTest {
         }
     }
     @Test
+    fun `refreshCoins обновляет кэш из сети`() = runTest{
+        repository.refreshCoins()
+
+        assertEquals(listOf("1"), dao.stored.map { it.id })
+    }
+    @Test
+    fun `refreshCoins без сети бросает ошибку и не трогает кэш`() = runTest{
+        dao.stored.add(CoinEntity(
+            id = "cached", symbol = "ETH", name = "Ethereum",
+            imageUrl = "url", price = 3000.0, priceChange = 1.0
+        ))
+        api.error = IOException()
+        try{
+            repository.refreshCoins()
+            fail("Исключение не вылетело")
+        } catch (e: DataException.Network) {
+        }
+        assertEquals(listOf("cached"), dao.stored.map { it.id })
+    }
+    @Test
     fun `история цен просит у API нужное число дней и сортирует точки`() = runTest{
         val points = repository.getPriceHistory("btc", ChartPeriod.MONTH)
 

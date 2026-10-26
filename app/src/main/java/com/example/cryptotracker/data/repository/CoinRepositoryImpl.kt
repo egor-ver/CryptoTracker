@@ -25,15 +25,29 @@ class CoinRepositoryImpl @Inject constructor(
         return coins
 
     }
+    private suspend fun fetchAndCache(): List<Coin> {
+        val coins = api.getCoins().map { it.toCoin() }
+        dao.replaceAll(coins.map{it.toEntity()})
+        return coins
+    }
     override suspend fun getCoins(): List<Coin> {
         return try{
-            val coins = api.getCoins().map { it.toCoin() }
-            dao.replaceAll(coins.map{it.toEntity()})
-            coins
+            fetchAndCache()
         } catch (e: IOException){
             loadFromRoom(DataException.Network(e))
         } catch (e: HttpException){
             loadFromRoom(DataException.Server(e))
+        }
+    }
+
+    // В отличие от getCoins не подменяет сетевую ошибку кэшем: фоновой синхронизации важно знать, что не вышло
+    override suspend fun refreshCoins() {
+        try {
+            fetchAndCache()
+        } catch (e: IOException) {
+            throw DataException.Network(e)
+        } catch (e: HttpException) {
+            throw DataException.Server(e)
         }
     }
 
