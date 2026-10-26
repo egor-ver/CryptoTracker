@@ -1,7 +1,9 @@
 package com.example.cryptotracker.data.remote
 
 import com.example.cryptotracker.data.remote.dto.CoinDto
+import com.example.cryptotracker.data.remote.dto.MarketChartDto
 import retrofit2.http.GET
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface CoinApi{
@@ -12,5 +14,12 @@ interface CoinApi{
         @Query("per_page") perPage: Int = 50,
         @Query("page") page: Int = 1
     ): List<CoinDto>
+
+    @GET("coins/{id}/market_chart")
+    suspend fun getMarketChart(
+        @Path("id") id: String,
+        @Query("vs_currency") currency: String = "usd",
+        @Query("days") days: Int
+    ): MarketChartDto
 
 }

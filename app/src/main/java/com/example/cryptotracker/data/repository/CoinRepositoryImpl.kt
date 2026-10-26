@@ -5,8 +5,11 @@ import com.example.cryptotracker.data.local.mapper.toCoin
 import com.example.cryptotracker.data.local.mapper.toEntity
 import com.example.cryptotracker.data.remote.CoinApi
 import com.example.cryptotracker.data.remote.mapper.toCoin
+import com.example.cryptotracker.data.remote.mapper.toPricePoints
 import com.example.cryptotracker.domain.error.DataException
+import com.example.cryptotracker.domain.model.ChartPeriod
 import com.example.cryptotracker.domain.model.Coin
+import com.example.cryptotracker.domain.model.PricePoint
 import com.example.cryptotracker.domain.repository.CoinRepository
 import retrofit2.HttpException
 import java.io.IOException
@@ -36,5 +39,16 @@ class CoinRepositoryImpl @Inject constructor(
 
     override suspend fun getCoin(id: String): Coin? {
         return dao.getCoinById(id)?.toCoin()
+    }
+
+    // История цен нужна только пока открыт экран, поэтому в Room её не кладём: без сети графика просто не будет
+    override suspend fun getPriceHistory(id: String, period: ChartPeriod): List<PricePoint> {
+        return try {
+            api.getMarketChart(id = id, days = period.days).toPricePoints()
+        } catch (e: IOException) {
+            throw DataException.Network(e)
+        } catch (e: HttpException) {
+            throw DataException.Server(e)
+        }
     }
 }

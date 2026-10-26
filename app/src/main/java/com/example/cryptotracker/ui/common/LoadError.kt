@@ -10,7 +10,8 @@ import com.example.cryptotracker.domain.error.DataException
 enum class LoadError(@StringRes val messageRes: Int) {
     NETWORK(R.string.error_network),
     SERVER(R.string.error_server),
-    NOT_FOUND(R.string.error_not_found)
+    NOT_FOUND(R.string.error_not_found),
+    NO_DATA(R.string.error_no_data)
 }
 
 @Composable

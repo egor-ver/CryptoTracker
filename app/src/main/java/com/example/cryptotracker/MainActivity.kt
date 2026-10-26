@@ -60,7 +60,16 @@ class MainActivity : ComponentActivity() {
                     ){
                         val detailViewModel: CoinDetailViewModel = hiltViewModel()
                         val detailState by detailViewModel.uiState.collectAsStateWithLifecycle()
-                        CoinDetailScreen(detailState, onBackClick = { navController.popBackStack() })
+                        val chartState by detailViewModel.chartState.collectAsStateWithLifecycle()
+                        val period by detailViewModel.period.collectAsStateWithLifecycle()
+                        CoinDetailScreen(
+                            state = detailState,
+                            chartState = chartState,
+                            period = period,
+                            onPeriodSelected = detailViewModel::onPeriodSelected,
+                            onChartRetry = detailViewModel::retryChart,
+                            onBackClick = { navController.popBackStack() }
+                        )
                     }
                     composable("favorites"){
                         val state by viewModel.uiState.collectAsStateWithLifecycle()

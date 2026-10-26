@@ -28,4 +28,15 @@ class FormattersTest {
         assertEquals("+2.50%", formatChange(2.5))
         assertEquals("-1.20%", formatChange(-1.2))
     }
+
+    @Test
+    fun `процент изменения между двумя ценами`() {
+        assertEquals(25.0, percentChange(100.0, 125.0), 0.0001)
+        assertEquals(-50.0, percentChange(200.0, 100.0), 0.0001)
+    }
+
+    @Test
+    fun `нулевая стартовая цена не даёт бесконечность`() {
+        assertEquals(0.0, percentChange(0.0, 100.0), 0.0)
+    }
 }

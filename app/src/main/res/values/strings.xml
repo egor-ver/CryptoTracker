@@ -3,4 +3,5 @@
     <string name="error_network">Нет сети</string>
     <string name="error_server">Ошибка сервера</string>
     <string name="error_not_found">Монета не найдена</string>
+    <string name="error_no_data">Нет данных для графика</string>
 </resources>

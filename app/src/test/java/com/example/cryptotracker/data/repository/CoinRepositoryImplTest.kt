@@ -2,6 +2,7 @@ package com.example.cryptotracker.data.repository
 
 import com.example.cryptotracker.data.local.db.CoinEntity
 import com.example.cryptotracker.domain.error.DataException
+import com.example.cryptotracker.domain.model.ChartPeriod
 import com.example.cryptotracker.testutil.FakeCoinApi
 import com.example.cryptotracker.testutil.FakeCoinDao
 import kotlinx.coroutines.test.runTest
@@ -49,6 +50,31 @@ class CoinRepositoryImplTest {
         api.error = HttpException(Response.error<Any>(500, "".toResponseBody(null)))
         try{
             repository.getCoins()
+            fail("Исключение не вылетело")
+        } catch (e: DataException.Server) {
+        }
+    }
+    @Test
+    fun `история цен просит у API нужное число дней и сортирует точки`() = runTest{
+        val points = repository.getPriceHistory("btc", ChartPeriod.MONTH)
+
+        assertEquals(listOf("btc" to 30), api.chartRequests)
+        assertEquals(listOf(1_000L, 2_000L), points.map { it.timestamp })
+    }
+    @Test
+    fun `история цен без сети бросает DataException Network`() = runTest{
+        api.chartError = IOException()
+        try{
+            repository.getPriceHistory("btc", ChartPeriod.DAY)
+            fail("Исключение не вылетело")
+        } catch (e: DataException.Network) {
+        }
+    }
+    @Test
+    fun `история цен при лимите запросов 429 бросает DataException Server`() = runTest{
+        api.chartError = HttpException(Response.error<Any>(429, "".toResponseBody(null)))
+        try{
+            repository.getPriceHistory("btc", ChartPeriod.DAY)
             fail("Исключение не вылетело")
         } catch (e: DataException.Server) {
         }
