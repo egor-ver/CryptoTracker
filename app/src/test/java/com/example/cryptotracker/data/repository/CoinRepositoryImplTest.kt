@@ -1,12 +1,16 @@
 package com.example.cryptotracker.data.repository
 
 import com.example.cryptotracker.data.local.db.CoinEntity
+import com.example.cryptotracker.domain.error.DataException
 import com.example.cryptotracker.testutil.FakeCoinApi
 import com.example.cryptotracker.testutil.FakeCoinDao
 import kotlinx.coroutines.test.runTest
+import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.Assert.assertEquals
 import org.junit.Assert.fail
 import org.junit.Test
+import retrofit2.HttpException
+import retrofit2.Response
 import java.io.IOException
 
 class CoinRepositoryImplTest {
@@ -32,12 +36,30 @@ class CoinRepositoryImplTest {
         assertEquals(listOf("cached"), result.map { it.id })
     }
     @Test
-    fun `когда нет сети и кэш пуст бросается IOException`() = runTest{
+    fun `когда нет сети и кэш пуст бросается DataException Network`() = runTest{
         api.error = IOException()
         try{
             repository.getCoins()
             fail("Исключение не вылетело")
-        } catch (e: IOException) {
+        } catch (e: DataException.Network) {
         }
+    }
+    @Test
+    fun `ошибка сервера при пустом кэше бросается как DataException Server`() = runTest{
+        api.error = HttpException(Response.error<Any>(500, "".toResponseBody(null)))
+        try{
+            repository.getCoins()
+            fail("Исключение не вылетело")
+        } catch (e: DataException.Server) {
+        }
+    }
+    @Test
+    fun `ошибка сервера при непустом кэше отдаёт кэш`() = runTest{
+        dao.stored.add(CoinEntity(
+            id = "cached", symbol = "ETH", name = "Ethereum",
+            imageUrl = "url", price = 3000.0, priceChange = 1.0
+        ))
+        api.error = HttpException(Response.error<Any>(500, "".toResponseBody(null)))
+        assertEquals(listOf("cached"), repository.getCoins().map { it.id })
     }
 }

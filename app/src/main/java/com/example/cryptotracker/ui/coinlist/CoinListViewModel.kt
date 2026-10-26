@@ -2,10 +2,11 @@ package com.example.cryptotracker.ui.coinlist
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.cryptotracker.domain.error.DataException
 import com.example.cryptotracker.domain.model.Coin
 import com.example.cryptotracker.domain.repository.CoinRepository
 import com.example.cryptotracker.domain.repository.FavoritesRepository
-import com.example.cryptotracker.ui.common.LoadError
+import com.example.cryptotracker.ui.common.toLoadError
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,8 +16,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import retrofit2.HttpException
-import java.io.IOException
 import javax.inject.Inject
 
 @HiltViewModel
@@ -58,10 +57,8 @@ class CoinListViewModel @Inject constructor(
             try {
                 val coins = repository.getCoins()
                 _uiState.value = CoinListUiState.Success(coins)
-            } catch (e: IOException) {
-                _uiState.value = CoinListUiState.Error(LoadError.NETWORK)
-            } catch (e: HttpException){
-                _uiState.value = CoinListUiState.Error(LoadError.SERVER)
+            } catch (e: DataException) {
+                _uiState.value = CoinListUiState.Error(e.toLoadError())
             }
         }
     }

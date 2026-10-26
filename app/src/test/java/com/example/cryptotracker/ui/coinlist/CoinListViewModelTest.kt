@@ -1,5 +1,6 @@
 package com.example.cryptotracker.ui.coinlist
 
+import com.example.cryptotracker.domain.error.DataException
 import com.example.cryptotracker.testutil.FakeFavoritesRepository
 import com.example.cryptotracker.testutil.FakeRepository
 import com.example.cryptotracker.testutil.MainDispatcherRule
@@ -8,14 +9,10 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
-import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
-import retrofit2.HttpException
-import retrofit2.Response
-import java.io.IOException
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class CoinListViewModelTest {
@@ -34,17 +31,16 @@ class CoinListViewModelTest {
         assertEquals(2, (state as CoinListUiState.Success).coins.size)
     }
     @Test
-    fun `uiState сообщение ошибки нет сети при исключении без сообщения`() = runTest(mainDispatcherRule.testDispatcher){
-        val fakeRepository = FakeRepository(IOException())
+    fun `uiState ошибка сети при DataException Network`() = runTest(mainDispatcherRule.testDispatcher){
+        val fakeRepository = FakeRepository(DataException.Network())
         val viewModel = CoinListViewModel(fakeRepository, FakeFavoritesRepository())
         advanceUntilIdle()
         val uiState = viewModel.uiState
         assertEquals(CoinListUiState.Error(LoadError.NETWORK), uiState.value)
     }
     @Test
-    fun `uiState ошибка сервера при HttpException`() = runTest(mainDispatcherRule.testDispatcher){
-        val error = HttpException(Response.error<Any>(500, "".toResponseBody(null)))
-        val viewModel = CoinListViewModel(FakeRepository(error), FakeFavoritesRepository())
+    fun `uiState ошибка сервера при DataException Server`() = runTest(mainDispatcherRule.testDispatcher){
+        val viewModel = CoinListViewModel(FakeRepository(DataException.Server()), FakeFavoritesRepository())
         advanceUntilIdle()
         assertEquals(CoinListUiState.Error(LoadError.SERVER), viewModel.uiState.value)
     }

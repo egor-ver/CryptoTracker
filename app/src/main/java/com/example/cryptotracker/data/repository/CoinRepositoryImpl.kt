@@ -5,6 +5,7 @@ import com.example.cryptotracker.data.local.mapper.toCoin
 import com.example.cryptotracker.data.local.mapper.toEntity
 import com.example.cryptotracker.data.remote.CoinApi
 import com.example.cryptotracker.data.remote.mapper.toCoin
+import com.example.cryptotracker.domain.error.DataException
 import com.example.cryptotracker.domain.model.Coin
 import com.example.cryptotracker.domain.repository.CoinRepository
 import retrofit2.HttpException
@@ -15,7 +16,7 @@ class CoinRepositoryImpl @Inject constructor(
     private val api: CoinApi,
     private val dao: CoinDao
 ): CoinRepository {
-    private suspend fun loadFromRoom(e: Exception): List<Coin>{
+    private suspend fun loadFromRoom(e: DataException): List<Coin>{
         val coins = dao.getCoins().map { it.toCoin() }
         if(coins.isEmpty()) throw e
         return coins
@@ -27,9 +28,9 @@ class CoinRepositoryImpl @Inject constructor(
             dao.replaceAll(coins.map{it.toEntity()})
             coins
         } catch (e: IOException){
-            loadFromRoom(e)
+            loadFromRoom(DataException.Network(e))
         } catch (e: HttpException){
-            loadFromRoom(e)
+            loadFromRoom(DataException.Server(e))
         }
     }
 
